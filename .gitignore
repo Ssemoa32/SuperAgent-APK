@@ -1,0 +1,24 @@
+# Build
+/app/build/
+/.gradle/
+/build/
+*.apk
+*.aab
+
+# Local
+local.properties
+*.keystore
+*.jks
+
+# IDE
+.idea/
+*.iml
+.DS_Store
+
+# Kotlin
+*.class
+
+# Gradle
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/

@@ -1,0 +1,22 @@
+<uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE"/>
+<uses-permission android:name="android.permission.CALL_PHONE"/>
+<uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+<uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
+ملاحظة: يجب تفعيل خدمة إمكانية الوصول يدوياً من إعدادات الجهاز.
+5. الخطوات العملية الآن
+أنشئ مشروع جديد في Android Studio (Empty Compose Activity).
+انسخ الألوان والكود أعلاه.
+سجّل الـ Accessibility Service في الـ Manifest.
+ابنِ الـ Dashboard باستخدام التصميم الذي ولدناه.
+هل تريد الآن أن أعطيك:
+كود الـ Dashboard الكامل بـ Jetpack Compose؟
+أم كود Skill جاهز لفتح التطبيقات وإجراء المكالمات؟
+أم كود ربط MCP؟
+قل لي أي جزء تبغاه بالتفصيل وأكمله فوراً.
+ابدأ بـ **كود الـ Dashboard الكامل بـ Jetpack Compose**.
+هذا هو الأساس البصري والتشغيلي الذي سيحتوي لاحقاً على أزرار تفعيل الـ Accessibility Service، وعرض حالة الـ Router/MCP، ومفاتيح OMNI. بدون هذه الواجهة، لا يمكن اختبار أو تشغيل الـ Skills الأخرى بشكل عملي.
+بمجرد الانتهاء من الـ Dashboard، سننتقل مباشرة إلى كود الـ Accessibility Service والـ Skills.
+تمام، إليك كود الـ Dashboard الكامل بـ Jetpack Compose.
+هذا الكود جاهز للنسخ مباشرة داخل مشروع Android Studio (Empty Compose Activity).
+الملف: DashboardScreen.kt
