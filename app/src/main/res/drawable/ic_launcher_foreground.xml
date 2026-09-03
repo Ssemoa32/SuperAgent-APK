@@ -4,7 +4,109 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+
+    <!-- دائرة خارجية -->
     <path
-        android:fillColor="#00F0FF"
-        android:pathData="M54,30 L70,54 L54,78 L38,54 Z"/>
+        android:pathData="M54,12 A42,42 0 1,1 53.99,12 Z"
+        android:strokeColor="#4D8BFF"
+        android:strokeWidth="1"
+        android:fillColor="#00000000"
+        android:strokeAlpha="0.4"/>
+
+    <!-- دائرة داخلية -->
+    <path
+        android:pathData="M54,20 A34,34 0 1,1 53.99,20 Z"
+        android:strokeColor="#00E5FF"
+        android:strokeWidth="0.6"
+        android:fillColor="#00000000"
+        android:strokeAlpha="0.25"/>
+
+    <!-- نقاط على الدائرة -->
+    <path android:pathData="M54,12 m-2,0 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0"
+        android:fillColor="#00E5FF" android:fillAlpha="0.9"/>
+    <path android:pathData="M54,94 m-2,0 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0"
+        android:fillColor="#00E5FF" android:fillAlpha="0.9"/>
+    <path android:pathData="M12,54 m0,-2 a2,2 0 1,0 0,4 a2,2 0 1,0 0,-4"
+        android:fillColor="#00E5FF" android:fillAlpha="0.9"/>
+    <path android:pathData="M96,54 m0,-2 a2,2 0 1,0 0,4 a2,2 0 1,0 0,-4"
+        android:fillColor="#00E5FF" android:fillAlpha="0.9"/>
+
+    <!-- نقاط زاوية -->
+    <path android:pathData="M24,24 m-1.5,0 a1.5,1.5 0 1,0 3,0 a1.5,1.5 0 1,0 -3,0"
+        android:fillColor="#4D8BFF" android:fillAlpha="0.6"/>
+    <path android:pathData="M84,24 m-1.5,0 a1.5,1.5 0 1,0 3,0 a1.5,1.5 0 1,0 -3,0"
+        android:fillColor="#4D8BFF" android:fillAlpha="0.6"/>
+    <path android:pathData="M24,84 m-1.5,0 a1.5,1.5 0 1,0 3,0 a1.5,1.5 0 1,0 -3,0"
+        android:fillColor="#4D8BFF" android:fillAlpha="0.6"/>
+    <path android:pathData="M84,84 m-1.5,0 a1.5,1.5 0 1,0 3,0 a1.5,1.5 0 1,0 -3,0"
+        android:fillColor="#4D8BFF" android:fillAlpha="0.6"/>
+
+    <!-- خط تحت الحرف -->
+    <path
+        android:pathData="M32,76 L76,76"
+        android:strokeColor="#00E5FF"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:strokeAlpha="0.7"/>
+
+    <!-- نقاط النبضة -->
+    <path android:pathData="M36,83 m-2.5,0 a2.5,2.5 0 1,0 5,0 a2.5,2.5 0 1,0 -5,0"
+        android:fillColor="#00E5FF" android:fillAlpha="0.95"/>
+    <path android:pathData="M47,83 m-2,0 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0"
+        android:fillColor="#4D8BFF" android:fillAlpha="0.6"/>
+    <path android:pathData="M54,83 m-2,0 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0"
+        android:fillColor="#8B5CF6" android:fillAlpha="0.4"/>
+    <path android:pathData="M61,83 m-2,0 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0"
+        android:fillColor="#4D8BFF" android:fillAlpha="0.6"/>
+    <path android:pathData="M72,83 m-2.5,0 a2.5,2.5 0 1,0 5,0 a2.5,2.5 0 1,0 -5,0"
+        android:fillColor="#00E5FF" android:fillAlpha="0.95"/>
+
+    <!-- حرف S الرئيسي — مسار دقيق -->
+    <path
+        android:pathData="
+M68,32
+C68,26 62,22 54,22
+C46,22 36,26 36,36
+C36,46 46,50 54,52
+C62,54 72,58 72,68
+C72,78 62,86 54,86
+C46,86 36,82 36,74"
+        android:strokeColor="#00E5FF"
+        android:strokeWidth="9"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:strokeAlpha="0.3"/>
+
+    <!-- حرف S — الطبقة الرئيسية -->
+    <path
+        android:pathData="
+M68,32
+C68,26 62,22 54,22
+C46,22 36,26 36,36
+C36,46 46,50 54,52
+C62,54 72,58 72,68
+C72,78 62,86 54,86
+C46,86 36,82 36,74"
+        android:strokeColor="#4D8BFF"
+        android:strokeWidth="7.5"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"/>
+
+    <!-- حرف S — طبقة نيون فوقية -->
+    <path
+        android:pathData="
+M68,32
+C68,26 62,22 54,22
+C46,22 36,26 36,36
+C36,46 46,50 54,52
+C62,54 72,58 72,68
+C72,78 62,86 54,86
+C46,86 36,82 36,74"
+        android:strokeColor="#00E5FF"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:strokeAlpha="0.9"/>
+
 </vector>
