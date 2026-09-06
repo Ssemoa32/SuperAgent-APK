@@ -6,6 +6,7 @@ object Prefs {
     private const val FILE         = "simo_prefs"
     private const val KEY_GROQ     = "groq_api_key"
     private const val KEY_CLAUDE   = "claude_api_key"
+    private const val KEY_KIMI     = "kimi_api_key"
     private const val KEY_MODEL    = "ai_model"
     private const val KEY_PROVIDER = "ai_provider"
 
@@ -27,6 +28,12 @@ object Prefs {
         ctx.getSharedPreferences(FILE, Context.MODE_PRIVATE).getString(KEY_GROQ, "") ?: ""
     fun setGroqKey(ctx: Context, key: String) =
         ctx.getSharedPreferences(FILE, Context.MODE_PRIVATE).edit().putString(KEY_GROQ, key).apply()
+
+    // ── Kimi (Moonshot AI) ────────────────────────────────────
+    fun getKimiKey(ctx: Context): String =
+        ctx.getSharedPreferences(FILE, Context.MODE_PRIVATE).getString(KEY_KIMI, "") ?: ""
+    fun setKimiKey(ctx: Context, key: String) =
+        ctx.getSharedPreferences(FILE, Context.MODE_PRIVATE).edit().putString(KEY_KIMI, key).apply()
 
     // ── Claude ────────────────────────────────────────────────
     fun getClaudeKey(ctx: Context): String =

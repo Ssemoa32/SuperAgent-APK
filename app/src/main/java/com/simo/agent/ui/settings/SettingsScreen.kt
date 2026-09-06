@@ -37,11 +37,13 @@ fun SettingsScreen() {
 
     var groqKey   by remember { mutableStateOf(Prefs.getGroqKey(ctx)) }
     var claudeKey by remember { mutableStateOf(Prefs.getClaudeKey(ctx)) }
+    var kimiKey   by remember { mutableStateOf(Prefs.getKimiKey(ctx)) }
     var model     by remember { mutableStateOf(Prefs.getModel(ctx)) }
-    var provider  by remember { mutableStateOf(Prefs.getProvider(ctx)) }  // "groq" | "claude"
+    var provider  by remember { mutableStateOf(Prefs.getProvider(ctx)) }  // "groq"|"claude"|"kimi"
 
     var showGroqKey   by remember { mutableStateOf(false) }
     var showClaudeKey by remember { mutableStateOf(false) }
+    var showKimiKey   by remember { mutableStateOf(false) }
     var saved         by remember { mutableStateOf(false) }
 
     Column(
@@ -77,6 +79,13 @@ fun SettingsScreen() {
                         color     = NeonPurple,
                         modifier  = Modifier.weight(1f)
                     ) { provider = "claude"; saved = false }
+
+                    ProviderChip(
+                        label     = "🌙 Kimi",
+                        selected  = provider == "kimi",
+                        color     = NeonBlue,
+                        modifier  = Modifier.weight(1f)
+                    ) { provider = "kimi"; saved = false }
                 }
             }
         }
@@ -138,6 +147,29 @@ fun SettingsScreen() {
             }
         }
 
+        // ── Kimi API Key ────────────────────────────────────────
+        Card(
+            colors = CardDefaults.cardColors(containerColor = CardBg),
+            shape  = RoundedCornerShape(14.dp)
+        ) {
+            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("🌙 Kimi API Key", color = TextPrimary, fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.weight(1f))
+                    if (provider == "kimi")
+                        Text("● نشط", color = NeonBlue, fontSize = 11.sp)
+                }
+                Text("moonshot-v1-8k — من platform.moonshot.cn", color = TextSecondary, fontSize = 12.sp)
+                ApiKeyField(
+                    value     = kimiKey,
+                    hint      = "sk-...",
+                    visible   = showKimiKey,
+                    onToggle  = { showKimiKey = !showKimiKey },
+                    onChange  = { kimiKey = it; saved = false }
+                )
+            }
+        }
+
         // ── Claude API Key ─────────────────────────────────────
         Card(
             colors = CardDefaults.cardColors(containerColor = CardBg),
@@ -166,13 +198,18 @@ fun SettingsScreen() {
             onClick = {
                 Prefs.setGroqKey(ctx, groqKey.trim())
                 Prefs.setClaudeKey(ctx, claudeKey.trim())
+                Prefs.setKimiKey(ctx, kimiKey.trim())
                 Prefs.setModel(ctx, model)
                 Prefs.setProvider(ctx, provider)
                 saved = true
             },
             modifier = Modifier.fillMaxWidth().height(50.dp),
             colors   = ButtonDefaults.buttonColors(
-                containerColor = if (provider == "claude") NeonPurple else NeonCyan
+                containerColor = when (provider) {
+                    "claude" -> NeonPurple
+                    "kimi"   -> NeonBlue
+                    else     -> NeonCyan
+                }
             ),
             shape = RoundedCornerShape(12.dp)
         ) {
@@ -186,8 +223,9 @@ fun SettingsScreen() {
         }
 
         // ── Status ──────────────────────────────────────────────
-        val ready = (provider == "groq" && groqKey.isNotEmpty()) ||
-                    (provider == "claude" && claudeKey.isNotEmpty())
+        val ready = (provider == "groq"   && groqKey.isNotEmpty())   ||
+                    (provider == "claude" && claudeKey.isNotEmpty()) ||
+                    (provider == "kimi"   && kimiKey.isNotEmpty())
         if (ready) {
             Card(
                 colors = CardDefaults.cardColors(containerColor = Color(0xFF0A2A1A)),

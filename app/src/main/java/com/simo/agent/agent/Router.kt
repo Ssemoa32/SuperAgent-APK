@@ -2,6 +2,7 @@ package com.simo.agent.agent
 
 import android.content.Context
 import com.simo.agent.api.ClaudeClient
+import com.simo.agent.api.KimiClient
 import com.simo.agent.services.CallService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -16,7 +17,8 @@ class Router(
     private val groqApiKey: String = "",
     private val model: String = "qwen/qwen3.8-27b",
     private val claudeApiKey: String = "",
-    private val provider: String = "groq"   // "groq" | "claude"
+    private val kimiApiKey: String = "",
+    private val provider: String = "groq"   // "groq" | "claude" | "kimi"
 ) {
 
     suspend fun route(command: String): String {
@@ -39,14 +41,21 @@ class Router(
                 } else "ما لقيت رقم في الأمر"
             }
             command.contains("ابحث", ignoreCase = true) -> {
-                skillManager.run("web_search", mapOf("query" to command))
+                val query = command.replace("ابحث", "", ignoreCase = true).trim()
+                if (context != null) {
+                    skillManager.run("web_search", mapOf("context" to context, "query" to query.ifEmpty { command }))
+                } else {
+                    "ابحث عن: $query"
+                }
             }
             provider == "claude" && claudeApiKey.isNotEmpty() ->
                 ClaudeClient.chat(claudeApiKey, command)
+            provider == "kimi" && kimiApiKey.isNotEmpty() ->
+                KimiClient.chat(kimiApiKey, command)
             groqApiKey.isNotEmpty() ->
                 askGroq(command)
             else ->
-                "أمر غير مفهوم. جرّب: افتح / اتصل / ابحث"
+                "⚠️ أدخل API Key من الإعدادات ⚙️"
         }
     }
 

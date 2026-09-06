@@ -31,6 +31,7 @@ class ChatViewModel(app: Application) : AndroidViewModel(app) {
             groqApiKey    = Prefs.getGroqKey(ctx),
             model         = Prefs.getModel(ctx),
             claudeApiKey  = Prefs.getClaudeKey(ctx),
+            kimiApiKey    = Prefs.getKimiKey(ctx),
             provider      = provider
         )
     }
