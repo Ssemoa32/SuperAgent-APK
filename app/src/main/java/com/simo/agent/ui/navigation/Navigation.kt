@@ -84,7 +84,7 @@ fun SimoNavHost() {
             modifier         = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Dashboard.route) { DashboardScreen() }
-            composable(Screen.Chat.route)      { ChatScreen() }
+            composable(Screen.Chat.route)      { ChatScreen(navController = navController) }
             composable(Screen.Skills.route)    { SkillsScreen() }
             composable(Screen.Settings.route)  { SettingsScreen() }
         }

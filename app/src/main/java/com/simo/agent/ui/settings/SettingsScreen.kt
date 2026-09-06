@@ -9,12 +9,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.ContentPaste
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -96,11 +101,12 @@ fun SettingsScreen() {
                 }
                 Text("احصل على مفتاح مجاني من groq.com", color = TextSecondary, fontSize = 12.sp)
                 ApiKeyField(
-                    value     = groqKey,
-                    hint      = "gsk_...",
-                    visible   = showGroqKey,
-                    onToggle  = { showGroqKey = !showGroqKey },
-                    onChange  = { groqKey = it; saved = false }
+                    value       = groqKey,
+                    hint        = "gsk_...",
+                    visible     = showGroqKey,
+                    onToggle    = { showGroqKey = !showGroqKey },
+                    onChange    = { groqKey = it; saved = false },
+                    accentColor = NeonCyan
                 )
             }
         }
@@ -153,11 +159,12 @@ fun SettingsScreen() {
                 }
                 Text("moonshot-v1-8k — من platform.moonshot.cn", color = TextSecondary, fontSize = 12.sp)
                 ApiKeyField(
-                    value     = kimiKey,
-                    hint      = "sk-...",
-                    visible   = showKimiKey,
-                    onToggle  = { showKimiKey = !showKimiKey },
-                    onChange  = { kimiKey = it; saved = false }
+                    value       = kimiKey,
+                    hint        = "sk-... (من platform.moonshot.cn)",
+                    visible     = showKimiKey,
+                    onToggle    = { showKimiKey = !showKimiKey },
+                    onChange    = { kimiKey = it; saved = false },
+                    accentColor = NeonBlue
                 )
             }
         }
@@ -176,11 +183,12 @@ fun SettingsScreen() {
                 }
                 Text("مجاني 100% — سجّل من openrouter.ai", color = TextSecondary, fontSize = 12.sp)
                 ApiKeyField(
-                    value    = openRouterKey,
-                    hint     = "sk-or-v1-...",
-                    visible  = showOpenRouterKey,
-                    onToggle = { showOpenRouterKey = !showOpenRouterKey },
-                    onChange = { openRouterKey = it; saved = false }
+                    value       = openRouterKey,
+                    hint        = "sk-or-v1-... (من openrouter.ai → Keys)",
+                    visible     = showOpenRouterKey,
+                    onToggle    = { showOpenRouterKey = !showOpenRouterKey },
+                    onChange    = { openRouterKey = it; saved = false },
+                    accentColor = Color(0xFF00E676)
                 )
 
                 if (provider == "openrouter") {
@@ -219,11 +227,12 @@ fun SettingsScreen() {
                 }
                 Text("claude-sonnet-4-5 — من console.anthropic.com", color = TextSecondary, fontSize = 12.sp)
                 ApiKeyField(
-                    value     = claudeKey,
-                    hint      = "sk-ant-...",
-                    visible   = showClaudeKey,
-                    onToggle  = { showClaudeKey = !showClaudeKey },
-                    onChange  = { claudeKey = it; saved = false }
+                    value       = claudeKey,
+                    hint        = "sk-ant-... (من console.anthropic.com)",
+                    visible     = showClaudeKey,
+                    onToggle    = { showClaudeKey = !showClaudeKey },
+                    onChange    = { claudeKey = it; saved = false },
+                    accentColor = NeonPurple
                 )
             }
         }
@@ -321,26 +330,64 @@ private fun ProviderChip(
 @Composable
 private fun ApiKeyField(
     value: String, hint: String, visible: Boolean,
-    onToggle: () -> Unit, onChange: (String) -> Unit
+    onToggle: () -> Unit, onChange: (String) -> Unit,
+    accentColor: Color = NeonCyan
 ) {
-    OutlinedTextField(
-        value          = value,
-        onValueChange  = onChange,
-        placeholder    = { Text(hint, color = Color(0xFF555555)) },
-        visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor   = NeonCyan,
-            unfocusedBorderColor = Color(0xFF333333),
-            focusedTextColor     = Color(0xFFE0E0E0),
-            unfocusedTextColor   = Color(0xFFE0E0E0)
-        ),
-        shape    = RoundedCornerShape(10.dp),
-        modifier = Modifier.fillMaxWidth(),
-        singleLine = true,
-        trailingIcon = {
-            TextButton(onClick = onToggle) {
-                Text(if (visible) "إخفاء" else "إظهار", color = NeonCyan, fontSize = 11.sp)
+    val clipboard: ClipboardManager = LocalClipboardManager.current
+
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        OutlinedTextField(
+            value         = value,
+            onValueChange = onChange,
+            placeholder   = { Text(hint, color = Color(0xFF444444), fontSize = 13.sp) },
+            visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor   = accentColor,
+                unfocusedBorderColor = Color(0xFF333333),
+                focusedTextColor     = Color(0xFFE0E0E0),
+                unfocusedTextColor   = Color(0xFFE0E0E0)
+            ),
+            shape      = RoundedCornerShape(10.dp),
+            modifier   = Modifier.fillMaxWidth(),
+            singleLine = true,
+            leadingIcon = {
+                Icon(
+                    if (visible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                    contentDescription = null,
+                    tint    = accentColor.copy(alpha = 0.6f),
+                    modifier = Modifier.clickable { onToggle() }
+                )
+            },
+            trailingIcon = {
+                if (value.isEmpty()) {
+                    // زر Paste واضح عند الحقل الفارغ
+                    IconButton(onClick = {
+                        val pasted = clipboard.getText()?.text ?: ""
+                        if (pasted.isNotEmpty()) onChange(pasted.trim())
+                    }) {
+                        Icon(Icons.Default.ContentPaste, contentDescription = "لصق", tint = accentColor)
+                    }
+                } else {
+                    TextButton(onClick = { onChange("") }) {
+                        Text("مسح", color = Color(0xFFFF5555), fontSize = 11.sp)
+                    }
+                }
+            }
+        )
+
+        // حالة المفتاح
+        if (value.isNotEmpty()) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Box(Modifier.size(6.dp).background(accentColor, RoundedCornerShape(50)))
+                Text(
+                    "✓ مفتاح محفوظ (${value.take(8)}...)",
+                    color    = accentColor,
+                    fontSize = 11.sp
+                )
             }
         }
-    )
+    }
 }
