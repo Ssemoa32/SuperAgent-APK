@@ -12,17 +12,18 @@ object Prefs {
     private const val KEY_MODEL       = "ai_model"
     private const val KEY_PROVIDER    = "ai_provider"
 
-    // نماذج Groq المتاحة فعلاً
+    // نماذج Groq المتاحة — صيغة Groq API (بدون slash)
+    // المصدر: https://console.groq.com/docs/models
     val GROQ_MODELS = listOf(
-        "qwen/qwen3.8-27b",
-        "llama-3.1-8b-instant",
+        "llama-3.3-70b-versatile",     // الأفضل جودةً
+        "llama-3.1-8b-instant",        // الأسرع
         "gemma2-9b-it",
         "llama3-8b-8192"
     )
+    // نماذج تم إيقافها فعلاً من Groq
     private val DEPRECATED_MODELS = setOf(
-        "llama-3.3-70b-versatile",
-        "llama-3.3-70b",
-        "mixtral-8x7b-32768"
+        "qwen/qwen3.8-27b",            // صيغة OpenRouter خاطئة على Groq
+        "mixtral-8x7b-32768"           // أوقف Groq دعمه
     )
 
     // ── Groq ─────────────────────────────────────────────────
@@ -56,12 +57,13 @@ object Prefs {
 
     // ── Model — تلقائياً يصحح النموذج القديم ────────────────
     fun getModel(ctx: Context): String {
+        val default = "llama-3.3-70b-versatile"
         val saved = ctx.getSharedPreferences(FILE, Context.MODE_PRIVATE)
-            .getString(KEY_MODEL, "qwen/qwen3.8-27b") ?: "qwen/qwen3.8-27b"
+            .getString(KEY_MODEL, default) ?: default
         return if (saved in DEPRECATED_MODELS) {
-            // إصلاح تلقائي: النموذج القديم لم يعد متاحاً
-            setModel(ctx, "qwen/qwen3.8-27b")
-            "qwen/qwen3.8-27b"
+            // إصلاح تلقائي: النموذج القديم لم يعد متاحاً أو صيغته خاطئة
+            setModel(ctx, default)
+            default
         } else saved
     }
     fun setModel(ctx: Context, model: String) =

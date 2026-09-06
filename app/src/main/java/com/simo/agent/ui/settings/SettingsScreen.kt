@@ -120,11 +120,13 @@ fun SettingsScreen() {
                 Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Text("🤖 نموذج Groq", color = TextPrimary, fontWeight = FontWeight.SemiBold)
 
+                    // صيغة Groq API الصحيحة (بدون slash)
+                    // المصدر: https://console.groq.com/docs/models
                     val models = listOf(
-                        "qwen/qwen3.8-27b"     to "Qwen 3 27B ✅ (موصى به)",
-                        "llama-3.1-8b-instant" to "Llama 3.1 8B ⚡ (أسرع)",
-                        "gemma2-9b-it"         to "Gemma 2 9B",
-                        "llama3-8b-8192"       to "Llama 3 8B"
+                        "llama-3.3-70b-versatile" to "Llama 3.3 70B ✅ (موصى به)",
+                        "llama-3.1-8b-instant"    to "Llama 3.1 8B ⚡ (أسرع)",
+                        "gemma2-9b-it"            to "Gemma 2 9B",
+                        "llama3-8b-8192"          to "Llama 3 8B"
                     )
 
                     models.forEach { (id, label) ->
@@ -225,7 +227,7 @@ fun SettingsScreen() {
                     if (provider == "claude")
                         Text("● نشط", color = NeonPurple, fontSize = 11.sp)
                 }
-                Text("claude-sonnet-4-5 — من console.anthropic.com", color = TextSecondary, fontSize = 12.sp)
+                Text("claude-sonnet-4-6 — من console.anthropic.com", color = TextSecondary, fontSize = 12.sp)
                 ApiKeyField(
                     value       = claudeKey,
                     hint        = "sk-ant-... (من console.anthropic.com)",
