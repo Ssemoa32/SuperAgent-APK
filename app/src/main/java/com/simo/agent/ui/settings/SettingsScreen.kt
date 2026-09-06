@@ -21,6 +21,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.simo.agent.api.OpenRouterClient
 import com.simo.agent.utils.Prefs
 
 private val DarkBg        = Color(0xFF0D0D0D)
@@ -35,16 +36,19 @@ private val TextSecondary = Color(0xFF888888)
 fun SettingsScreen() {
     val ctx = LocalContext.current
 
-    var groqKey   by remember { mutableStateOf(Prefs.getGroqKey(ctx)) }
-    var claudeKey by remember { mutableStateOf(Prefs.getClaudeKey(ctx)) }
-    var kimiKey   by remember { mutableStateOf(Prefs.getKimiKey(ctx)) }
-    var model     by remember { mutableStateOf(Prefs.getModel(ctx)) }
-    var provider  by remember { mutableStateOf(Prefs.getProvider(ctx)) }  // "groq"|"claude"|"kimi"
+    var groqKey        by remember { mutableStateOf(Prefs.getGroqKey(ctx)) }
+    var claudeKey      by remember { mutableStateOf(Prefs.getClaudeKey(ctx)) }
+    var kimiKey        by remember { mutableStateOf(Prefs.getKimiKey(ctx)) }
+    var openRouterKey  by remember { mutableStateOf(Prefs.getOpenRouterKey(ctx)) }
+    var openRouterMdl  by remember { mutableStateOf(Prefs.getOpenRouterModel(ctx)) }
+    var model          by remember { mutableStateOf(Prefs.getModel(ctx)) }
+    var provider       by remember { mutableStateOf(Prefs.getProvider(ctx)) }
 
-    var showGroqKey   by remember { mutableStateOf(false) }
-    var showClaudeKey by remember { mutableStateOf(false) }
-    var showKimiKey   by remember { mutableStateOf(false) }
-    var saved         by remember { mutableStateOf(false) }
+    var showGroqKey       by remember { mutableStateOf(false) }
+    var showClaudeKey     by remember { mutableStateOf(false) }
+    var showKimiKey       by remember { mutableStateOf(false) }
+    var showOpenRouterKey by remember { mutableStateOf(false) }
+    var saved             by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -65,27 +69,15 @@ fun SettingsScreen() {
             Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text("🧠 مزود الذكاء الاصطناعي", color = TextPrimary, fontWeight = FontWeight.SemiBold)
 
-                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    ProviderChip(
-                        label     = "⚡ Groq",
-                        selected  = provider == "groq",
-                        color     = NeonCyan,
-                        modifier  = Modifier.weight(1f)
-                    ) { provider = "groq"; saved = false }
-
-                    ProviderChip(
-                        label     = "🤖 Claude",
-                        selected  = provider == "claude",
-                        color     = NeonPurple,
-                        modifier  = Modifier.weight(1f)
-                    ) { provider = "claude"; saved = false }
-
-                    ProviderChip(
-                        label     = "🌙 Kimi",
-                        selected  = provider == "kimi",
-                        color     = NeonBlue,
-                        modifier  = Modifier.weight(1f)
-                    ) { provider = "kimi"; saved = false }
+                // Row 1
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    ProviderChip("⚡ Groq",   provider == "groq",   NeonCyan,   Modifier.weight(1f)) { provider = "groq";   saved = false }
+                    ProviderChip("🤖 Claude", provider == "claude", NeonPurple, Modifier.weight(1f)) { provider = "claude"; saved = false }
+                }
+                // Row 2
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    ProviderChip("🌙 Kimi",   provider == "kimi",        NeonBlue,           Modifier.weight(1f)) { provider = "kimi";        saved = false }
+                    ProviderChip("🆓 Free",   provider == "openrouter",  Color(0xFF00E676),  Modifier.weight(1f)) { provider = "openrouter";  saved = false }
                 }
             }
         }
@@ -170,6 +162,49 @@ fun SettingsScreen() {
             }
         }
 
+        // ── OpenRouter Free ─────────────────────────────────────
+        Card(
+            colors = CardDefaults.cardColors(containerColor = CardBg),
+            shape  = RoundedCornerShape(14.dp)
+        ) {
+            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("🆓 OpenRouter Free Key", color = TextPrimary, fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.weight(1f))
+                    if (provider == "openrouter")
+                        Text("● نشط", color = Color(0xFF00E676), fontSize = 11.sp)
+                }
+                Text("مجاني 100% — سجّل من openrouter.ai", color = TextSecondary, fontSize = 12.sp)
+                ApiKeyField(
+                    value    = openRouterKey,
+                    hint     = "sk-or-v1-...",
+                    visible  = showOpenRouterKey,
+                    onToggle = { showOpenRouterKey = !showOpenRouterKey },
+                    onChange = { openRouterKey = it; saved = false }
+                )
+
+                if (provider == "openrouter") {
+                    Spacer(Modifier.height(4.dp))
+                    Text("النموذج", color = TextSecondary, fontSize = 12.sp)
+                    OpenRouterClient.FREE_MODELS.forEach { (id, label) ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(label, color = if (openRouterMdl == id) Color(0xFF00E676) else TextSecondary,
+                                fontSize = 13.sp, modifier = Modifier.weight(1f))
+                            RadioButton(
+                                selected = openRouterMdl == id,
+                                onClick  = { openRouterMdl = id; saved = false },
+                                colors   = RadioButtonDefaults.colors(selectedColor = Color(0xFF00E676))
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
         // ── Claude API Key ─────────────────────────────────────
         Card(
             colors = CardDefaults.cardColors(containerColor = CardBg),
@@ -199,6 +234,8 @@ fun SettingsScreen() {
                 Prefs.setGroqKey(ctx, groqKey.trim())
                 Prefs.setClaudeKey(ctx, claudeKey.trim())
                 Prefs.setKimiKey(ctx, kimiKey.trim())
+                Prefs.setOpenRouterKey(ctx, openRouterKey.trim())
+                Prefs.setOpenRouterModel(ctx, openRouterMdl)
                 Prefs.setModel(ctx, model)
                 Prefs.setProvider(ctx, provider)
                 saved = true
@@ -206,9 +243,10 @@ fun SettingsScreen() {
             modifier = Modifier.fillMaxWidth().height(50.dp),
             colors   = ButtonDefaults.buttonColors(
                 containerColor = when (provider) {
-                    "claude" -> NeonPurple
-                    "kimi"   -> NeonBlue
-                    else     -> NeonCyan
+                    "claude"      -> NeonPurple
+                    "kimi"        -> NeonBlue
+                    "openrouter"  -> Color(0xFF00E676)
+                    else          -> NeonCyan
                 }
             ),
             shape = RoundedCornerShape(12.dp)
@@ -223,9 +261,10 @@ fun SettingsScreen() {
         }
 
         // ── Status ──────────────────────────────────────────────
-        val ready = (provider == "groq"   && groqKey.isNotEmpty())   ||
-                    (provider == "claude" && claudeKey.isNotEmpty()) ||
-                    (provider == "kimi"   && kimiKey.isNotEmpty())
+        val ready = (provider == "groq"        && groqKey.isNotEmpty())       ||
+                    (provider == "claude"      && claudeKey.isNotEmpty())     ||
+                    (provider == "kimi"        && kimiKey.isNotEmpty())       ||
+                    (provider == "openrouter"  && openRouterKey.isNotEmpty())
         if (ready) {
             Card(
                 colors = CardDefaults.cardColors(containerColor = Color(0xFF0A2A1A)),

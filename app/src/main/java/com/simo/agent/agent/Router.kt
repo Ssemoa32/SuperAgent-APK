@@ -3,6 +3,7 @@ package com.simo.agent.agent
 import android.content.Context
 import com.simo.agent.api.ClaudeClient
 import com.simo.agent.api.KimiClient
+import com.simo.agent.api.OpenRouterClient
 import com.simo.agent.services.CallService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -18,7 +19,9 @@ class Router(
     private val model: String = "qwen/qwen3.8-27b",
     private val claudeApiKey: String = "",
     private val kimiApiKey: String = "",
-    private val provider: String = "groq"   // "groq" | "claude" | "kimi"
+    private val openRouterApiKey: String = "",
+    private val openRouterModel: String = "meta-llama/llama-3.1-8b-instruct:free",
+    private val provider: String = "groq"   // "groq"|"claude"|"kimi"|"openrouter"
 ) {
 
     suspend fun route(command: String): String {
@@ -52,6 +55,8 @@ class Router(
                 ClaudeClient.chat(claudeApiKey, command)
             provider == "kimi" && kimiApiKey.isNotEmpty() ->
                 KimiClient.chat(kimiApiKey, command)
+            provider == "openrouter" && openRouterApiKey.isNotEmpty() ->
+                OpenRouterClient.chat(openRouterApiKey, openRouterModel, command)
             groqApiKey.isNotEmpty() ->
                 askGroq(command)
             else ->

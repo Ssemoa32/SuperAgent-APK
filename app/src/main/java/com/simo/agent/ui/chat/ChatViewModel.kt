@@ -26,13 +26,15 @@ class ChatViewModel(app: Application) : AndroidViewModel(app) {
         val ctx      = getApplication<Application>()
         val provider = Prefs.getProvider(ctx)
         return Router(
-            skillManager  = skillManager,
-            context       = ctx,
-            groqApiKey    = Prefs.getGroqKey(ctx),
-            model         = Prefs.getModel(ctx),
-            claudeApiKey  = Prefs.getClaudeKey(ctx),
-            kimiApiKey    = Prefs.getKimiKey(ctx),
-            provider      = provider
+            skillManager      = skillManager,
+            context           = ctx,
+            groqApiKey        = Prefs.getGroqKey(ctx),
+            model             = Prefs.getModel(ctx),
+            claudeApiKey      = Prefs.getClaudeKey(ctx),
+            kimiApiKey        = Prefs.getKimiKey(ctx),
+            openRouterApiKey  = Prefs.getOpenRouterKey(ctx),
+            openRouterModel   = Prefs.getOpenRouterModel(ctx),
+            provider          = provider
         )
     }
 

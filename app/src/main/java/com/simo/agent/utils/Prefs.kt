@@ -6,9 +6,11 @@ object Prefs {
     private const val FILE         = "simo_prefs"
     private const val KEY_GROQ     = "groq_api_key"
     private const val KEY_CLAUDE   = "claude_api_key"
-    private const val KEY_KIMI     = "kimi_api_key"
-    private const val KEY_MODEL    = "ai_model"
-    private const val KEY_PROVIDER = "ai_provider"
+    private const val KEY_KIMI        = "kimi_api_key"
+    private const val KEY_OPENROUTER  = "openrouter_api_key"
+    private const val KEY_OR_MODEL    = "openrouter_model"
+    private const val KEY_MODEL       = "ai_model"
+    private const val KEY_PROVIDER    = "ai_provider"
 
     // نماذج Groq المتاحة فعلاً
     val GROQ_MODELS = listOf(
@@ -34,6 +36,17 @@ object Prefs {
         ctx.getSharedPreferences(FILE, Context.MODE_PRIVATE).getString(KEY_KIMI, "") ?: ""
     fun setKimiKey(ctx: Context, key: String) =
         ctx.getSharedPreferences(FILE, Context.MODE_PRIVATE).edit().putString(KEY_KIMI, key).apply()
+
+    // ── OpenRouter (Free) ─────────────────────────────────────
+    fun getOpenRouterKey(ctx: Context): String =
+        ctx.getSharedPreferences(FILE, Context.MODE_PRIVATE).getString(KEY_OPENROUTER, "") ?: ""
+    fun setOpenRouterKey(ctx: Context, key: String) =
+        ctx.getSharedPreferences(FILE, Context.MODE_PRIVATE).edit().putString(KEY_OPENROUTER, key).apply()
+    fun getOpenRouterModel(ctx: Context): String =
+        ctx.getSharedPreferences(FILE, Context.MODE_PRIVATE)
+            .getString(KEY_OR_MODEL, "meta-llama/llama-3.1-8b-instruct:free") ?: "meta-llama/llama-3.1-8b-instruct:free"
+    fun setOpenRouterModel(ctx: Context, model: String) =
+        ctx.getSharedPreferences(FILE, Context.MODE_PRIVATE).edit().putString(KEY_OR_MODEL, model).apply()
 
     // ── Claude ────────────────────────────────────────────────
     fun getClaudeKey(ctx: Context): String =
