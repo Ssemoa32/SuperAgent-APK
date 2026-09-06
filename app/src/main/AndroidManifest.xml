@@ -32,10 +32,16 @@
         </activity>
 
         <!-- Foreground Service -->
+        <!-- specialUse يتطلب <property> يشرح سبب الاستخدام لـ Google Play -->
+        <!-- المصدر: https://developer.android.com/develop/background-work/services/fg-service-types#special-use -->
         <service
             android:name=".services.AgentForegroundService"
             android:exported="false"
-            android:foregroundServiceType="specialUse" />
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="AI agent running in background to process user commands and notifications" />
+        </service>
 
         <!-- Accessibility Service -->
         <service

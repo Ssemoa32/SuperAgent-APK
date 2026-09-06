@@ -16,13 +16,15 @@ class Router(
     private val skillManager: SkillManager,
     private val context: Context? = null,
     private val groqApiKey: String = "",
-    private val model: String = "qwen/qwen3.8-27b",
+    private val model: String = "llama-3.3-70b-versatile", // Groq model ID صحيح
     private val claudeApiKey: String = "",
     private val kimiApiKey: String = "",
     private val openRouterApiKey: String = "",
     private val openRouterModel: String = "meta-llama/llama-3.1-8b-instruct:free",
     private val provider: String = "groq"   // "groq"|"claude"|"kimi"|"openrouter"
 ) {
+    // تاريخ المحادثة لـ Groq (الـ clients الأخرى تحتفظ بـ history داخلياً)
+    private val groqHistory = mutableListOf<JSONObject>()
 
     suspend fun route(command: String): String {
         return when {
@@ -65,39 +67,53 @@ class Router(
     }
 
     private suspend fun askGroq(prompt: String): String = withContext(Dispatchers.IO) {
+        // https://console.groq.com/docs/openai — OpenAI-compatible API
+        groqHistory.add(JSONObject().apply {
+            put("role", "user")
+            put("content", prompt)
+        })
+        if (groqHistory.size > 20) groqHistory.removeAt(0)
+
         try {
             val conn = URL("https://api.groq.com/openai/v1/chat/completions")
                 .openConnection() as HttpURLConnection
             conn.requestMethod = "POST"
             conn.doOutput = true
+            conn.connectTimeout = 20_000
+            conn.readTimeout    = 30_000
             conn.setRequestProperty("Authorization", "Bearer $groqApiKey")
             conn.setRequestProperty("Content-Type", "application/json")
 
+            val messages = JSONArray().apply {
+                put(JSONObject().apply {
+                    put("role", "system")
+                    put("content", "أنت SimoAgent وكيل ذكي. أجب بالعربية باختصار.")
+                })
+                groqHistory.forEach { put(it) }
+            }
+
             val body = JSONObject().apply {
                 put("model", model)
-                put("messages", JSONArray().apply {
-                    put(JSONObject().apply {
-                        put("role", "system")
-                        put("content", "أنت SimoAgent وكيل ذكي. أجب بالعربية باختصار.")
-                    })
-                    put(JSONObject().apply {
-                        put("role", "user")
-                        put("content", prompt)
-                    })
-                })
+                put("messages", messages)
                 put("max_tokens", 512)
             }
             conn.outputStream.write(body.toString().toByteArray())
 
             val resp = if (conn.responseCode == 200)
                 conn.inputStream.bufferedReader().readText()
-            else conn.errorStream.bufferedReader().readText()
+            else return@withContext "❌ Groq ${conn.responseCode}: ${conn.errorStream.bufferedReader().readText()}"
 
-            JSONObject(resp)
+            val content = JSONObject(resp)
                 .getJSONArray("choices")
                 .getJSONObject(0)
                 .getJSONObject("message")
                 .getString("content")
+
+            groqHistory.add(JSONObject().apply {
+                put("role", "assistant")
+                put("content", content)
+            })
+            content
         } catch (e: Exception) {
             "خطأ Groq: ${e.message}"
         }

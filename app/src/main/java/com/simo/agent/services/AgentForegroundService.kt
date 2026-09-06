@@ -6,8 +6,11 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.content.pm.ServiceInfo
+import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import androidx.core.app.ServiceCompat
 import com.simo.agent.MainActivity
 
 class AgentForegroundService : Service() {
@@ -34,7 +37,17 @@ class AgentForegroundService : Service() {
 
     private fun startAgentService() {
         val notification = buildNotification()
-        startForeground(NOTIFICATION_ID, notification)
+        // Android 14+ (API 34) يجب تحديد نوع الخدمة الأمامية
+        // المصدر: https://developer.android.com/develop/background-work/services/fg-service-types
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            startForeground(
+                NOTIFICATION_ID,
+                notification,
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
+            )
+        } else {
+            startForeground(NOTIFICATION_ID, notification)
+        }
     }
 
     private fun buildNotification(): Notification {

@@ -2,6 +2,7 @@ package com.simo.agent.agent
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.json.JSONArray
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
@@ -33,10 +34,21 @@ class MCPClient(
 
             if (connection.responseCode == 200) {
                 val response = connection.inputStream.bufferedReader().readText()
-                // Parse tools from JSON
-                val json = JSONObject(response)
-                // Return parsed tools
-                tools
+                // MCP tools/list response: { "tools": [ { "name":..., "description":..., "inputSchema":... } ] }
+                // المصدر: https://spec.modelcontextprotocol.io/specification/server/tools/
+                val toolsArray: JSONArray = JSONObject(response).optJSONArray("tools") ?: JSONArray()
+                tools.clear()
+                for (i in 0 until toolsArray.length()) {
+                    val t = toolsArray.getJSONObject(i)
+                    tools.add(
+                        MCPTool(
+                            name        = t.optString("name"),
+                            description = t.optString("description"),
+                            parameters  = emptyMap() // inputSchema يمكن تحليله لاحقاً
+                        )
+                    )
+                }
+                tools.toList()
             } else {
                 emptyList()
             }

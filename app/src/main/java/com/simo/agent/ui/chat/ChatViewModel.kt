@@ -22,6 +22,9 @@ class ChatViewModel(app: Application) : AndroidViewModel(app) {
 
     private val skillManager = SkillManager()
 
+    // Router يُنشأ مرة واحدة — إعادة الإنشاء لكل رسالة تضيع تاريخ Groq وتهدر الموارد
+    private var router: Router = buildRouter()
+
     private fun buildRouter(): Router {
         val ctx      = getApplication<Application>()
         val provider = Prefs.getProvider(ctx)
@@ -38,6 +41,9 @@ class ChatViewModel(app: Application) : AndroidViewModel(app) {
         )
     }
 
+    /** استدعيها بعد تغيير الإعدادات لإعادة بناء الـ Router بالمفاتيح الجديدة */
+    fun reloadSettings() { router = buildRouter() }
+
     private val _uiState = MutableStateFlow(ChatUiState())
     val uiState: StateFlow<ChatUiState> = _uiState.asStateFlow()
 
@@ -51,7 +57,7 @@ class ChatViewModel(app: Application) : AndroidViewModel(app) {
         )
 
         viewModelScope.launch {
-            val response = buildRouter().route(text)
+            val response = router.route(text)
             _uiState.value = _uiState.value.copy(
                 messages  = _uiState.value.messages + ChatMessage(content = response, isUser = false),
                 isLoading = false

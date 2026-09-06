@@ -15,7 +15,8 @@ object ClaudeClient {
 
     private const val BASE_URL  = "https://api.anthropic.com/v1/messages"
     private const val API_VER   = "2023-06-01"
-    private const val MODEL     = "claude-sonnet-4-5"   // أو claude-haiku-3-5 للسرعة
+    // المصدر: https://docs.anthropic.com/en/docs/about-claude/models
+    private const val MODEL     = "claude-sonnet-4-6"   // أو claude-haiku-4-5-20251001 للسرعة
 
     private val history = mutableListOf<JSONObject>()
 
